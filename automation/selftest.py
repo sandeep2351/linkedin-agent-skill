@@ -134,6 +134,26 @@ class LinkedInRunnerTest(unittest.TestCase):
         self.assertTrue((folder / "headline.txt").exists())
         self.assertTrue((folder / "about.txt").exists())
 
+    def test_profile_dry_run_writes_objects_and_leaves_linkedin(self) -> None:
+        from automation.profile_kit import read_posted_profile, write_profile_dry_run
+
+        source = read_posted_profile(
+            {"headline": "DevOps Engineer", "about": "I build pipelines."}
+        )
+        self.assertEqual(source["headline"], "DevOps Engineer")
+        self.assertTrue(source["experience"])
+        folder = Path(tempfile.mkdtemp())
+        payload = write_profile_dry_run(folder, source)
+        saved = json.loads((folder / "dry-run.json").read_text(encoding="utf-8"))
+        self.assertTrue(payload["dry_run"])
+        self.assertFalse(saved["linkedin_changed"])
+        self.assertFalse(saved["drive_uploaded"])
+        self.assertEqual(saved["source"]["headline"], "DevOps Engineer")
+        self.assertIsInstance(saved["enhanced"]["experience"], list)
+        self.assertIsInstance(saved["enhanced"]["experience"][0], dict)
+        self.assertIn("Kubernetes", saved["enhanced"]["headline"])
+        self.assertNotIn("passionate", saved["enhanced"]["about"].lower())
+
     def test_gif_roadmap_renders(self) -> None:
         import tempfile
 

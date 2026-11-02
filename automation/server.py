@@ -17,7 +17,7 @@ from .drivebox import APPLICATIONS_FOLDER, POSTS_FOLDER, PROFILE_FOLDER, upload_
 from .feed import build_pack, next_board
 from .openroles import assess_apply, collect_jobs, linkedin_searches, rank_jobs, tailor, write_application
 from .sources import collect_source
-from .profile_kit import ABOUT, HEADLINE, write_profile_kit
+from .profile_kit import ABOUT, HEADLINE, read_posted_profile, write_profile_dry_run, write_profile_kit
 
 ENDPOINTS = [
     {
@@ -34,6 +34,11 @@ ENDPOINTS = [
         "method": "POST",
         "path": "/profile/enhance",
         "purpose": "Rewrite the LinkedIn headline, about, and experience from the resume, save the kit, and upload it to the Sandeep LinkedIn Profile Drive folder.",
+    },
+    {
+        "method": "POST",
+        "path": "/profile/enhance/dry-run",
+        "purpose": "Read the full profile, rewrite it for recruiters, and save source plus enhanced objects to dry-run.json. Does not change LinkedIn and does not upload to Drive.",
     },
     {
         "method": "POST",
@@ -166,6 +171,9 @@ class Handler(BaseHTTPRequestHandler):
             self._send(400, {"error": str(error)})
             return
         try:
+            if parsed.path == "/profile/enhance/dry-run":
+                self._send(200, _enhance_dry_run(self.config, body))
+                return
             if parsed.path == "/profile/enhance":
                 self._send(200, _enhance(self.config))
                 return
@@ -212,6 +220,18 @@ def run_source(config: Config, name: str, limit: int) -> dict:
         "errors": pulled["errors"],
         "note": pulled["note"],
     }
+
+
+def _enhance_dry_run(config: Config, body: dict) -> dict:
+    """Preview only. The JSON file is the review copy. LinkedIn stays as it is."""
+    source = read_posted_profile(body)
+    payload = write_profile_dry_run(config.output_dir / "profile", source)
+    payload["note"] = (
+        "Review the enhanced object in dry-run.json. "
+        "Nothing was written to LinkedIn and nothing was uploaded. "
+        "Paste the sections yourself when the file looks right, or call POST /profile/enhance after that."
+    )
+    return payload
 
 
 def _enhance(config: Config) -> dict:
