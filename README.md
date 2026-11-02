@@ -65,6 +65,14 @@ file. Skip it and everything comes out sounding like everyone else.
 | `/li-inbox` | Triages the inbox into lead / recruiter / peer / ask / spam, and tells you which tell gave the sequence away. |
 | `/li-audit` | Post-mortem on what you have already published. Ranks by engagement rate and reach multiple, not impressions. |
 
+## On this machine
+
+The eleven skills are the writing rules. `automation/` runs the account on this machine.
+
+**Brief.** Every two days it builds one roadmap GIF and the caption under it, on AI, DevOps, ML, cloud, Kubernetes, Terraform, networking, and observability. `--profile-kit` rewrites the headline, about, and experience from the resume for recruiters. You upload the GIF and paste the text.
+
+The short version and the per-command detail are in [automation/README.md](automation/README.md). The commands are in [automation/COMMANDS.md](automation/COMMANDS.md).
+
 ## The humanizer
 
 `/li-human` ships two Python scripts with no dependencies. They run on your
