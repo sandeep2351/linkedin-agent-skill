@@ -1,0 +1,9 @@
+# GIF posts need Pillow. Resume PDFs need reportlab.
+pillow>=10
+reportlab>=4
+# Drive uploads reuse the Google login already saved for this account.
+google-api-python-client>=2
+google-auth>=2
+google-auth-httplib2>=0.2
+# Optional, only if you re-read the resume PDF.
+pypdf>=5

@@ -1,0 +1,5 @@
+Most teams add Kubernetes because a slide said they should scale.
+
+A pod is the smallest thing you run. If you cannot say what sits inside it, the cluster is a costume.
+
+What do you wish someone had drawn for you on day one?

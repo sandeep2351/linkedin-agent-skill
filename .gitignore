@@ -3,3 +3,11 @@ __pycache__/
 *.pyc
 .venv/
 *.tmp
+
+# Local drafts, the voice overrides, and the Bedrock key. Never commit these.
+.env
+automation/.env
+automation/output/
+automation/state/
+automation/logs/
+automation/engage.txt

@@ -1,0 +1,5 @@
+# Copy this file to automation/engage.txt and replace the names with real people.
+# kind | name | why you can add something specific
+# reach | Priya Shah | writes about on-call handoffs
+# peer | Arun Dev | builds the same kind of pipelines
+# buyer | A team lead who asked how a rollback works

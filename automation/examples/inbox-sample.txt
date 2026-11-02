@@ -1,0 +1,7 @@
+Hi, I am a recruiter hiring a DevOps engineer. The role is in Bengaluru. Salary band is on the call.
+---
+Quick question. I help companies generate leads. Book a time at calendly.com/example
+---
+We need help with our pipeline. The deploy works on one machine and dies on the other. Can you build a diagram of it with us?
+---
+Can you review this Dockerfile? It is twelve lines. I am not asking for a project, just the line that looks wrong.

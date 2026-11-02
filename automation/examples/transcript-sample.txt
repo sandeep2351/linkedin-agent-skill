@@ -1,0 +1,9 @@
+A pod is the smallest thing Kubernetes runs. People hear cluster and picture a room of servers. The thing you actually start is a pod.
+
+A pod holds one or more containers that share a network address and can share a disk. When the pod dies, those containers die with it. That is the mechanism.
+
+Docker builds the container. Kubernetes decides where the pod runs, and it starts a replacement when the first one fails. The replacement is a new pod, not a repaired one.
+
+The mistake is treating the YAML as the understanding. If you cannot say what the pod shares, and what it does not share, the file is ahead of you.
+
+The line I would keep: a pod is a cabin, not the ship.

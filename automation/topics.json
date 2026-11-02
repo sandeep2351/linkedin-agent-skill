@@ -1,0 +1,98 @@
+[
+  {
+    "id": "pod-is-not-a-server",
+    "type": "teach",
+    "category": "devops",
+    "title_seed": "A Kubernetes pod is not a server",
+    "angle": "A pod is the smallest thing Kubernetes runs. Explain it as one cabin on a ship: the container sits inside, and the cabin has one address. Do not invent an outage or a client.",
+    "hook_id": 11
+  },
+  {
+    "id": "docker-packed-lunch",
+    "type": "teach",
+    "category": "devops",
+    "title_seed": "A container is a packed lunch",
+    "angle": "Docker packs the app, the libraries, and the start command into one box. The machine around it can change. Give the three Dockerfile lines. No personal metric.",
+    "hook_id": 21
+  },
+  {
+    "id": "pipeline-is-a-factory",
+    "type": "teach",
+    "category": "devops",
+    "title_seed": "A Jenkins pipeline is a factory line",
+    "angle": "Build, test, and deliver are three stations. Explain what each station checks before the next one starts. No invented build time.",
+    "hook_id": 5
+  },
+  {
+    "id": "terraform-plan-first",
+    "type": "teach",
+    "category": "infra",
+    "title_seed": "Read the Terraform plan before you apply",
+    "angle": "plan shows what will be created, changed, and destroyed. apply does it. Teach the reader to stop on a destroy line. No invented cloud bill.",
+    "hook_id": 15
+  },
+  {
+    "id": "oncall-is-a-loop",
+    "type": "teach",
+    "category": "sre",
+    "title_seed": "On-call is a loop, not a hero night",
+    "angle": "Alert, look, fix, write down what the alert missed. Explain the loop for a new engineer. Do not invent an incident cost.",
+    "hook_id": 16
+  },
+  {
+    "id": "model-is-not-magic",
+    "type": "teach",
+    "category": "ai",
+    "title_seed": "A model predicts, it does not know",
+    "angle": "A model maps inputs it has seen to a likely next output. Explain training versus asking, in plain words, for a beginner. No benchmark you were not given.",
+    "hook_id": 11
+  },
+  {
+    "id": "one-clear-lesson",
+    "type": "opinion",
+    "category": "writing",
+    "title_seed": "One clear lesson beats a daily post",
+    "angle": "Engineers learn from one specific mechanism. A daily post that says nothing new trains the reader to skip you. This is a position, not a personal growth story.",
+    "hook_id": 1
+  },
+  {
+    "id": "tools-are-not-architecture",
+    "type": "opinion",
+    "category": "cloud",
+    "title_seed": "Naming the tool is not the architecture",
+    "angle": "AWS, Azure, and GCP are places the design runs. The design is still requests, data, and failure. Say that plainly. No vendor bake-off with fake prices.",
+    "hook_id": 11
+  },
+  {
+    "id": "draw-it-before-merge",
+    "type": "opinion",
+    "category": "devops",
+    "title_seed": "Do not merge a pipeline you cannot draw",
+    "angle": "If you cannot sketch build, test, and deploy on paper, the YAML is ahead of you. The rule is the point. Do not claim you fired a teammate or a client.",
+    "hook_id": 18
+  },
+  {
+    "id": "rollback-is-the-proof",
+    "type": "proof",
+    "category": "devops",
+    "title_seed": "A deploy is proven when you can roll it back",
+    "angle": "The receipt is the rollback path: the previous version still starts. Describe the check. If you want a personal duration, leave {{your number}}.",
+    "hook_id": 10
+  },
+  {
+    "id": "three-lines-dockerfile",
+    "type": "proof",
+    "category": "devops",
+    "title_seed": "Three Dockerfile lines that are enough to start",
+    "angle": "Give the base image line, the copy line, and the start command. The artifact is the point. Do not invent a company that adopted it.",
+    "hook_id": 21
+  },
+  {
+    "id": "alert-without-a-next-step",
+    "type": "opinion",
+    "category": "sre",
+    "title_seed": "An alert with no next step is noise",
+    "angle": "An alert has to say what is wrong and what to open first. A graph with no action wakes people up and teaches them to ignore the next one.",
+    "hook_id": 15
+  }
+]
