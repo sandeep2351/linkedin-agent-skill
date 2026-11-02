@@ -17,7 +17,7 @@ from .drivebox import APPLICATIONS_FOLDER, POSTS_FOLDER, PROFILE_FOLDER, upload_
 from .feed import build_pack, next_board
 from .openroles import assess_apply, collect_jobs, linkedin_searches, rank_jobs, tailor, write_application
 from .sources import collect_source
-from .profile_kit import ABOUT, HEADLINE, read_posted_profile, write_profile_dry_run, write_profile_kit
+from .profile_enhance import run_profile_enhance
 
 ENDPOINTS = [
     {
@@ -33,12 +33,12 @@ ENDPOINTS = [
     {
         "method": "POST",
         "path": "/profile/enhance",
-        "purpose": "Rewrite the LinkedIn headline, about, and experience from the resume, save the kit, and upload it to the Sandeep LinkedIn Profile Drive folder.",
+        "purpose": "Collect the full resume profile, ask Claude to enhance each section with recruiter keywords, and write the paste files only after every section passes validation. Then upload those files to the Sandeep LinkedIn Profile Drive folder. Does not edit LinkedIn.",
     },
     {
         "method": "POST",
         "path": "/profile/enhance/dry-run",
-        "purpose": "Read the full profile, rewrite it for recruiters, and save source plus enhanced objects to dry-run.json. Does not change LinkedIn and does not upload to Drive.",
+        "purpose": "Same Claude pass as /profile/enhance, with no request body. Saves each section into dry-run.json and writes the enhanced object only after every section passes. Does not edit LinkedIn and does not upload.",
     },
     {
         "method": "POST",
@@ -172,7 +172,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             if parsed.path == "/profile/enhance/dry-run":
-                self._send(200, _enhance_dry_run(self.config, body))
+                self._send(200, _enhance_dry_run(self.config))
                 return
             if parsed.path == "/profile/enhance":
                 self._send(200, _enhance(self.config))
@@ -222,31 +222,25 @@ def run_source(config: Config, name: str, limit: int) -> dict:
     }
 
 
-def _enhance_dry_run(config: Config, body: dict) -> dict:
-    """Preview only. The JSON file is the review copy. LinkedIn stays as it is."""
-    source = read_posted_profile(body)
-    payload = write_profile_dry_run(config.output_dir / "profile", source)
-    payload["note"] = (
-        "Review the enhanced object in dry-run.json. "
-        "Nothing was written to LinkedIn and nothing was uploaded. "
-        "Paste the sections yourself when the file looks right, or call POST /profile/enhance after that."
-    )
-    return payload
+def _enhance_dry_run(config: Config) -> dict:
+    """Preview only. Claude rewrites every section. LinkedIn and Drive stay untouched."""
+    return run_profile_enhance(config, dry_run=True)
 
 
 def _enhance(config: Config) -> dict:
-    folder = write_profile_kit(config.output_dir / "profile")
-    files = [folder / "headline.txt", folder / "about.txt", folder / "experience.txt", folder / "PASTE-ORDER.txt"]
-    payload = {
-        "headline": HEADLINE,
-        "about": ABOUT.strip(),
-        "local_folder": str(folder),
-        "paste_order": (folder / "PASTE-ORDER.txt").read_text(encoding="utf-8"),
-    }
+    """Same Claude pass as the dry run. Paste files and Drive update only after every section passes."""
+    payload = run_profile_enhance(config, dry_run=False)
+    if not payload.get("applied"):
+        return payload
+    # Upload happens after the last section file is on disk, never before validation.
+    files = [Path(item) for item in payload.get("files") or []]
     try:
         payload["drive"] = upload_many(config, files, PROFILE_FOLDER)
+        payload["drive_uploaded"] = True
     except Exception as error:
         payload["drive_error"] = str(error)
+    report = Path(payload["file"])
+    report.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     return payload
 
 

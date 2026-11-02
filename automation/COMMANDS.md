@@ -14,13 +14,13 @@ Check that the API process is up.
 
 curl -s http://127.0.0.1:8787/health
 
-Enhance the LinkedIn profile from the resume. Writes the headline, about, and experience, then uploads those files to the Google Drive folder named Sandeep LinkedIn Profile.
+Enhance the LinkedIn profile. No body. The call reads the full resume profile, asks Claude which sections to rewrite, then sends each section to Claude with the recruiter keywords that are already true. A section is kept only when the facts, dates, keywords, and tone checks pass. If every section passes, the paste files are written one by one and uploaded to the Google Drive folder named Sandeep LinkedIn Profile. LinkedIn itself is not edited.
 
 curl -s -X POST http://127.0.0.1:8787/profile/enhance
 
-Dry-run the same profile rewrite. Send your current LinkedIn sections in the body. Missing sections are filled from the resume, so the file still has the full record. The enhanced headline, about, experience, education, skills, featured, and contact are saved as objects in automation/output/profile/dry-run.json. This call does not change LinkedIn and does not upload to Drive. Read that file, and paste it yourself only if it looks right.
+Dry-run the same Claude pass. No body. Each section is added to automation/output/profile/dry-run.json as Claude finishes it. The enhanced object is written only after every section passes. This call does not change LinkedIn and does not upload to Drive. Paste from that file yourself only if it looks right.
 
-curl -s -X POST http://127.0.0.1:8787/profile/enhance/dry-run -H 'Content-Type: application/json' -d '{"headline":"DevOps Engineer","about":"paste the current about","experience":[{"title":"DevOps Engineer","company":"SproutsAI","bullets":["current bullet"]}]}'
+curl -s -X POST http://127.0.0.1:8787/profile/enhance/dry-run
 
 Create the next roadmap GIF and caption, then upload post.gif, preview.png, and post.txt to the Google Drive folder named Sandeep LinkedIn Posts.
 

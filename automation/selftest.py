@@ -154,6 +154,64 @@ class LinkedInRunnerTest(unittest.TestCase):
         self.assertIn("Kubernetes", saved["enhanced"]["headline"])
         self.assertNotIn("passionate", saved["enhanced"]["about"].lower())
 
+    def test_claude_profile_dry_run_writes_each_section_after_validation(self) -> None:
+        from automation.profile_enhance import normalize_selection, run_profile_enhance
+        from automation.profile_kit import enhanced_profile
+
+        self.assertEqual(normalize_selection(["about"])[0], "about")
+        self.assertIn("headline", normalize_selection(["about"]))
+        enhanced = enhanced_profile()
+        contact = dict(enhanced["contact"])
+        contact["open_to_work"] = [
+            "DevOps Engineer",
+            "Cloud Engineer",
+            "Site Reliability Engineer",
+            "Platform Engineer",
+        ]
+        samples = {
+            "headline": {"text": enhanced["headline"]},
+            "about": {"text": enhanced["about"]},
+            "banner": {"text": enhanced["banner"]},
+            "experience": {"roles": enhanced["experience"]},
+            "skills": enhanced["skills"],
+            "education": {"schools": enhanced["education"]},
+            "featured": {"items": enhanced["featured"]},
+            "contact": contact,
+        }
+
+        def ask(prompt: str, _max_tokens: int):
+            if "TASK: select" in prompt:
+                return {"sections": ["experience", "headline", "about"]}
+            name = prompt.split("SECTION: ", 1)[1].split("\n", 1)[0].strip()
+            return samples[name]
+
+        folder = Path(tempfile.mkdtemp())
+        payload = run_profile_enhance(Config(), dry_run=True, ask_fn=ask, folder=folder)
+        saved = json.loads((folder / "dry-run.json").read_text(encoding="utf-8"))
+        self.assertTrue(payload["applied"])
+        self.assertFalse(saved["linkedin_changed"])
+        self.assertFalse(saved["drive_uploaded"])
+        self.assertEqual(saved["updated"][0], "experience")
+        self.assertGreaterEqual(len(saved["sections"]), 8)
+        self.assertIsInstance(saved["enhanced"]["experience"], list)
+        self.assertIn("Kubernetes", saved["enhanced"]["headline"])
+        self.assertTrue(saved["source"]["experience"])
+
+    def test_claude_profile_stops_when_a_section_fails(self) -> None:
+        from automation.profile_enhance import run_profile_enhance
+
+        def ask(prompt: str, _max_tokens: int):
+            if "TASK: select" in prompt:
+                return {"sections": ["headline"]}
+            return {"text": "Senior DevOps Engineer with 12 years and 99% passion"}
+
+        folder = Path(tempfile.mkdtemp())
+        payload = run_profile_enhance(Config(), dry_run=True, ask_fn=ask, folder=folder)
+        self.assertFalse(payload["applied"])
+        self.assertIsNone(payload["enhanced"])
+        self.assertFalse(payload["linkedin_changed"])
+        self.assertEqual(payload["sections"][0]["status"], "failed")
+
     def test_gif_roadmap_renders(self) -> None:
         import tempfile
 
